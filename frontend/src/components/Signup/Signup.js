@@ -17,17 +17,40 @@ const SignUp = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(formData);
-    try {
-      const { data } = await axios.post("https://gym-backend.onrender.com/user/register", formData);
-      console.log("data: ", data);
-      navigate("/login"); // Redirect to Login page after successful signup
-    } catch (error) {
-      console.log("error: ", error);
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   console.log(formData);
+  //   try {
+  //     const { data } = await axios.post("https://gym-backend.onrender.com/user/register", formData);
+  //     console.log("data: ", data);
+  //     navigate("/login"); // Redirect to Login page after successful signup
+  //   } catch (error) {
+  //     console.log("error: ", error);
+  //   }
+  // };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  console.log("Submitting signup form with:", formData);
+
+  try {
+    const { data } = await axios.post(
+      "https://gym-backend.onrender.com/user/register",
+      formData
+    );
+
+    console.log("Response:", data);
+
+    if (data.success) {
+      alert("Signup successful! Please login.");
+      navigate("/login");
+    } else {
+      alert(data.message || "Signup failed.");
     }
-  };
+  } catch (error) {
+    console.error("Signup error:", error.response?.data || error.message);
+    alert(error.response?.data?.message || "Signup failed. Please try again.");
+  }
+};
 
   return (
     <div className="signup-container">
