@@ -21,10 +21,7 @@ const SignUp = () => {
     e.preventDefault();
     console.log(formData);
     try {
-      const { data } = await axios.post(
-        "http://localhost:8080/user/register",
-        formData
-      );
+      const { data } = await axios.post("https://gym-backend.onrender.com/user/register", formData);
       console.log("data: ", data);
       navigate("/login"); // Redirect to Login page after successful signup
     } catch (error) {
