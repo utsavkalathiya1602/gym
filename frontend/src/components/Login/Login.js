@@ -33,21 +33,44 @@ const Login = () => {
   //   }
   // };
 
-  const handleSubmit = async (e) => {
+//   const handleSubmit = async (e) => {
+//   e.preventDefault();
+//   console.log("Submitting login form with:", formData);
+//   try {
+//     const { data } = await axios.post("https://gym-backend.onrender.com/user/login", formData);
+
+//     console.log("Response:", data);
+//     if (data.success) {
+//       console.log("Success detected, navigating to /Home");
+//       navigate("/home");
+//       // 
+//       console.log("Navigation attempted");
+//     }
+//   } catch (error) {
+//    alert("Login error:", error);
+//   }
+// };
+const handleSubmit = async (e) => {
   e.preventDefault();
   console.log("Submitting login form with:", formData);
+
   try {
-    const { data } = await axios.post("https://gym-backend.onrender.com/user/login", formData);
+    const { data } = await axios.post(
+      "https://gym-backend.onrender.com/user/login",
+      formData
+    );
 
     console.log("Response:", data);
+
     if (data.success) {
-      console.log("Success detected, navigating to /Home");
+      console.log("Login success, navigating to /home");
       navigate("/home");
-      // 
-      console.log("Navigation attempted");
+    } else {
+      alert(data.message || "Invalid credentials");
     }
   } catch (error) {
-   alert("Login error:", error);
+    console.error("Login error:", error.response?.data || error.message);
+    alert(error.response?.data?.message || "Login failed. Please try again.");
   }
 };
 
