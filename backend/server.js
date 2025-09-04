@@ -35,12 +35,17 @@ mongoose
 // Importing routes
 const userRoutes = require("./router/user.route");
 const adminRoutes = require("./router/admin.route");
-const paymentRoutes = require("./router/payment.route"); // Import payment routes
+const paymentRoutes = require("./router/payment.route");
+
+// ✅ Root route
+app.get("/", (req, res) => {
+  res.send("Gym backend is running ✅");
+});
 
 // Using routes
 app.use("/user", userRoutes);
 app.use("/admin", adminRoutes);
-app.use("/payments", paymentRoutes); // Setup payment routes
+app.use("/payments", paymentRoutes);
 
 // Start server
 app.listen(port, (err) => {
