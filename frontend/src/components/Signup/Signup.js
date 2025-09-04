@@ -40,17 +40,14 @@ const handleSubmit = async (e) => {
 
     console.log("Response:", data);
 
-    if (data.success) {
-      alert("Signup successful! Please login.");
-      navigate("/login");
-    } else {
-      alert(data.message || "Signup failed.");
-    }
+    alert(data.message || "Signup successful! Please login.");
+    navigate("/login");
   } catch (error) {
     console.error("Signup error:", error.response?.data || error.message);
     alert(error.response?.data?.message || "Signup failed. Please try again.");
   }
 };
+
 
   return (
     <div className="signup-container">
