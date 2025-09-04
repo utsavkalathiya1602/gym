@@ -37,7 +37,8 @@ const Login = () => {
   e.preventDefault();
   console.log("Submitting login form with:", formData);
   try {
-    const { data } = await axios.post("http://localhost:8080/user/login", formData);
+    const { data } = await axios.post("https://gym-backend.onrender.com/user/login", formData);
+
     console.log("Response:", data);
     if (data.success) {
       console.log("Success detected, navigating to /Home");
