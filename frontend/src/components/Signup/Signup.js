@@ -40,14 +40,18 @@ const handleSubmit = async (e) => {
 
     console.log("Response:", data);
 
-    // Always redirect if request successful
-    alert(data.message || "Signup successful! Please login.");
-    navigate("/login");  
+    if (data.success) {
+      alert(data.message || "Signup successful! Please login.");
+      navigate("/login");
+    } else {
+      alert(data.message || "Signup failed.");
+    }
   } catch (error) {
     console.error("Signup error:", error.response?.data || error.message);
     alert(error.response?.data?.message || "Signup failed. Please try again.");
   }
 };
+
 
 
 
