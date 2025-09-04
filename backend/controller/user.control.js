@@ -2,54 +2,122 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const usermodel = require("../models/user.model");
 
+// exports.register = async (req, res) => {
+//   try {
+//     const { email, password,username } = req.body;
+
+//     // const hashPassword = bcrypt.hashSync(password)
+//     const hashPassword = bcrypt.hashSync(password, 10);
+
+
+//     const user = await usermodel.create({ email, password :hashPassword,username});
+
+//     res.status(201).json({ success: true, user: email });
+//   } catch (error) {
+//     console.log(error);
+    
+//   }
+// };
+
+
+// exports.login = async (req, res) => {
+//   try {
+//     const { email, password,username } = req.body;
+
+//     const user = await usermodel.findOne({ email });
+
+//     // if (!user) return res.status(401).json({message:"invalid email",success: true}) 
+//     if (!user) return res.status(401).json({ success: false, message:"invalid email" });
+// if (!isPasswordMatch) return res.status(401).json({ success: false, message:"invalid password" });
+
+
+//     const isPasswordMatch = bcrypt.compareSync(password, user.password);
+
+//     // if (!isPasswordMatch)
+//     //   return res.status(401).json({message:"invalid passsword",success: true})
+
+//     const { password: pass, ...rest } = user._doc;
+
+//     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY);
+
+//     // const option = {
+//     //   expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+//     //   httpOnly: true,
+//     //   sameSite: "none",
+//     //   secure: "false",
+//     // };
+//     const option = {
+//   expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+//   httpOnly: true,
+//   sameSite: "none",
+//   secure: false, // boolean
+// };
+
+
+//     res.cookie("token", token, option);
+
+//     res.status(200).json({ success: true, user: rest });
+//   } catch (error) {
+//     console.log("error in login",error);
+    
+//   }
+// };
+
 exports.register = async (req, res) => {
   try {
-    const { email, password,username } = req.body;
+    const { email, password, username } = req.body;
 
-    const hashPassword = bcrypt.hashSync(password)
+    const existingUser = await usermodel.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: "Email already exists" });
+    }
 
-    const user = await usermodel.create({ email, password :hashPassword,username});
+    const hashPassword = bcrypt.hashSync(password, 10);
 
-    res.status(201).json({ success: true, user: email });
+    const user = await usermodel.create({ email, password: hashPassword, username });
+
+    res.status(201).json({ success: true, message: "User registered successfully", user: email });
   } catch (error) {
     console.log(error);
-    
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
-
 exports.login = async (req, res) => {
   try {
-    const { email, password,username } = req.body;
+    const { email, password } = req.body;
 
     const user = await usermodel.findOne({ email });
 
-    if (!user) return res.status(401).json({message:"invalid email",success: true}) 
+    if (!user) return res.status(401).json({ success: false, message: "Invalid email" });
 
     const isPasswordMatch = bcrypt.compareSync(password, user.password);
 
     if (!isPasswordMatch)
-      return res.status(401).json({message:"invalid passsword",success: true})
+      return res.status(401).json({ success: false, message: "Invalid password" });
 
     const { password: pass, ...rest } = user._doc;
 
-    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY);
+    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
+      expiresIn: "1d",
+    });
 
     const option = {
       expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
       httpOnly: true,
       sameSite: "none",
-      secure: "false",
+      secure: false, // change to true in production with HTTPS
     };
 
     res.cookie("token", token, option);
 
-    res.status(200).json({ success: true, user: rest });
+    res.status(200).json({ success: true, message: "Login successful", user: rest });
   } catch (error) {
-    console.log("error in login",error);
-    
+    console.log("error in login", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 exports.single = async (req, res) => {
   try {
